@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("训练设备\n{:=^20}".format(str(device)))
 model = Model.YOLOModel(2,4)
 model = model.to(device)
 
@@ -101,65 +102,3 @@ for epoch in range(100):
                 break
 
 writer.close()
-
-
-
-
-
-
-"""import torch
-from Model import YOLOModel
-from Loss import Loss
-from YOLO_datasets import YOLODatasets
-from torch.utils.data import DataLoader
-from torchvision import transforms
-from torch.utils.tensorboard import SummaryWriter
-
-# 配置
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-NUM_CLASSES = 4  # 根据你的数据集修改
-NUM_BOXES = 2
-
-# 1. 初始化模型和 Loss
-model = YOLOModel(num_classes=NUM_CLASSES, num_box=NUM_BOXES).to(DEVICE)
-criterion = Loss(num_boxes=NUM_BOXES, num_classes=NUM_CLASSES).to(DEVICE)  # 使用自定义 Loss
-
-# 2. 优化器
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-
-# 3. 数据加载
-dataset = YOLODatasets('./HelmetDataset-YOLO-Train/images', './HelmetDataset-YOLO-Train/labels',
-                                transform=transforms.Compose([transforms.ToTensor(),transforms.Resize((448,448))]),
-                                label_transform=None)  # 确保返回的 labels 形状为 [B, 18, 7, 7]
-dataloader = DataLoader(dataset, batch_size=10, shuffle=True)  # 报错中 Batch 为 10
-
-
-writer = SummaryWriter("./logs")
-
-# 4. 训练循环
-step = 0
-for epoch in range(10):
-
-    model.train()
-    for images, labels in dataloader:
-        images = images.to(DEVICE)
-        labels = labels.to(DEVICE)
-
-        # 前向传播
-        outputs = model(images)  # outputs shape: [10, 18, 7, 7]
-
-        # ✅ 计算损失：使用自定义 criterion，而不是 nn.CrossEntropyLoss
-        loss = criterion(outputs, labels)
-
-        # 反向传播
-        if loss.dim() > 0:
-            loss = loss.mean()
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-        print(f"Epoch {epoch}, Loss: {loss.mean()}")
-        writer.add_scalar(loss.name, loss.mean(), step)
-        step += 1
-
-writer.close()"""
